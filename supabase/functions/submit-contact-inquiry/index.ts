@@ -6,12 +6,48 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const SUBJECT_LABELS: Record<string, string> = {
+  quote: "Quote Inquiry",
+  support: "Support Request",
+  partnership: "Partnership Opportunity",
+  other: "Other",
+};
+
 interface ContactInquiry {
   name: string;
   email: string;
   phone: string;
   subject: string;
   message: string;
+}
+
+function buildContactEmailHtml(body: ContactInquiry): string {
+  const subjectLabel = SUBJECT_LABELS[body.subject] ?? body.subject;
+  const replyUrl = `mailto:${body.email}?subject=${encodeURIComponent(`Re: ${subjectLabel}`)}`;
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:20px">
+  <div style="background:white;border-radius:10px;padding:32px;max-width:600px;margin:auto;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+    <div style="background:linear-gradient(135deg,#14b8a6,#0d9488);padding:20px 24px;border-radius:8px;margin-bottom:24px">
+      <h1 style="color:white;margin:0;font-size:20px">💬 New Contact Inquiry</h1>
+      <p style="color:rgba(255,255,255,.85);margin:4px 0 0;font-size:14px">Someone has reached out via the Lugha website contact form.</p>
+    </div>
+    <span style="background:#f0fdfa;color:#0f766e;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600">${subjectLabel}</span>
+    <table style="width:100%;margin-top:20px;border-collapse:collapse">
+      <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">From</td><td style="padding:8px 0;font-size:15px;font-weight:500">${body.name}</td></tr>
+      <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">Email</td><td style="padding:8px 0"><a href="mailto:${body.email}" style="color:#0d9488">${body.email}</a></td></tr>
+      <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">Phone</td><td style="padding:8px 0"><a href="tel:${body.phone}" style="color:#0d9488">${body.phone}</a></td></tr>
+    </table>
+    <div style="margin-top:20px">
+      <div style="color:#888;font-size:12px;text-transform:uppercase;margin-bottom:6px">Message</div>
+      <div style="background:#f9f9f9;border-left:3px solid #14b8a6;padding:12px 16px;border-radius:0 6px 6px 0;font-size:14px;color:#444;line-height:1.6;white-space:pre-wrap">${body.message}</div>
+    </div>
+    <div style="margin-top:20px">
+      <a href="${replyUrl}" style="display:inline-block;padding:10px 24px;background:#14b8a6;color:white;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Reply to ${body.name}</a>
+    </div>
+    <hr style="border:none;border-top:1px solid #eee;margin:24px 0"/>
+    <div style="text-align:center;color:#aaa;font-size:12px">Lugha Translation Services &bull; getlugha@gmail.com &bull; +255 744 381 263</div>
+  </div>
+</body></html>`;
 }
 
 Deno.serve(async (req: Request) => {
@@ -65,6 +101,40 @@ Deno.serve(async (req: Request) => {
     if (error) {
       throw error;
     }
+
+    // ── Send email notification (non-critical) ───────────────────────────
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (resendApiKey) {
+      try {
+        const subjectLabel = SUBJECT_LABELS[body.subject] ?? body.subject;
+        const emailRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Lugha Notifications <onboarding@resend.dev>",
+            to: ["getlugha@gmail.com"],
+            reply_to: body.email,
+            subject: `💬 New Contact Inquiry — ${subjectLabel} from ${body.name}`,
+            html: buildContactEmailHtml(body),
+          }),
+        });
+        if (!emailRes.ok) {
+          const errText = await emailRes.text();
+          console.warn(`Resend warning (${emailRes.status}): ${errText}`);
+        } else {
+          const emailJson = await emailRes.json();
+          console.log("Email sent, id:", emailJson.id);
+        }
+      } catch (emailErr) {
+        console.warn("Email send failed (non-critical):", emailErr);
+      }
+    } else {
+      console.warn("RESEND_API_KEY not set — skipping email notification");
+    }
+    // ────────────────────────────────────────────────────────────────────
 
     return new Response(
       JSON.stringify({

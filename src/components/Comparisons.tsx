@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { notifyQuoteRequest } from '../lib/notify';
 
 interface ComparisonPackage {
   name: string;
@@ -84,15 +86,10 @@ export default function Comparisons() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-quote-request`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
+      const { error } = await supabase
+        .from('quote_requests')
+        .insert([
+          {
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
@@ -101,34 +98,44 @@ export default function Comparisons() {
             urgency: formData.urgency,
             source_language: formData.sourceLanguage,
             target_languages: formData.targetLanguages,
-            message: formData.message,
-          }),
-        }
-      );
+            message: formData.message || null,
+            status: 'pending',
+          },
+        ]);
 
-      if (response.ok) {
-        setSubmitSuccess(true);
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          sourceLanguage: '',
-          targetLanguages: [],
-          wordCount: '',
-          urgency: 'standard',
-          message: '',
-        });
-        setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowForm(false);
-        }, 3000);
-      } else {
-        const errorData = await response.json().catch(() => null);
-        setErrorMessage(errorData?.error || 'Error submitting request. Please try again.');
-      }
+      if (error) throw error;
+
+      // Notify owner via email (fire-and-forget, never blocks the user)
+      notifyQuoteRequest({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        category: selectedPackage,
+        wordCount: formData.wordCount,
+        sourceLanguage: formData.sourceLanguage,
+        targetLanguages: formData.targetLanguages,
+        urgency: formData.urgency,
+        message: formData.message,
+      });
+
+      setSubmitSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        sourceLanguage: '',
+        targetLanguages: [],
+        wordCount: '',
+        urgency: 'standard',
+        message: '',
+      });
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setShowForm(false);
+      }, 3000);
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Network error occurred. Please try again.');
+      setErrorMessage('Error submitting request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -150,11 +157,10 @@ export default function Comparisons() {
           {packages.map((pkg, index) => (
             <div
               key={index}
-              className={`rounded-xl border transition-all cursor-pointer ${
-                expandedIndex === index
+              className={`rounded-xl border transition-all cursor-pointer ${expandedIndex === index
                   ? 'border-primary-500 shadow-lg'
                   : 'border-gray-200 hover:border-gray-300'
-              } ${pkg.highlighted ? 'md:ring-2 ring-primary-500' : ''}`}
+                } ${pkg.highlighted ? 'md:ring-2 ring-primary-500' : ''}`}
               onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
             >
               <div className="p-6">
@@ -165,9 +171,8 @@ export default function Comparisons() {
                   </div>
                   <ChevronDown
                     size={24}
-                    className={`text-gray-400 transition-transform ${
-                      expandedIndex === index ? 'rotate-180' : ''
-                    }`}
+                    className={`text-gray-400 transition-transform ${expandedIndex === index ? 'rotate-180' : ''
+                      }`}
                   />
                 </div>
 

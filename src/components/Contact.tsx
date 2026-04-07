@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MessageSquare } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { notifyContactInquiry } from '../lib/notify';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -25,38 +27,45 @@ export default function Contact() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/submit-contact-inquiry`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      const { error } = await supabase
+        .from('contact_inquiries')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            subject: formData.subject,
+            message: formData.message,
+            status: 'pending',
           },
-          body: JSON.stringify(formData),
-        }
-      );
+        ]);
 
-      if (response.ok) {
-        setSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
-        });
+      if (error) throw error;
 
-        setTimeout(() => {
-          setSubmitted(false);
-        }, 5000);
-      } else {
-        const errorData = await response.json().catch(() => null);
-        setErrorMessage(errorData?.error || 'Error submitting form. Please try again.');
-      }
+      // Notify owner via email (fire-and-forget)
+      notifyContactInquiry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      setSubmitted(true);
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
+      });
+
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
     } catch (error) {
       console.error('Error:', error);
-      setErrorMessage('Network error occurred. Please try again.');
+      setErrorMessage('Error submitting form. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
