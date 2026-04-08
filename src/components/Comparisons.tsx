@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { supabase } from '../lib/supabase';
-import { notifyQuoteRequest } from '../lib/notify';
 
 interface ComparisonPackage {
   name: string;
@@ -57,6 +57,8 @@ export default function Comparisons() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileInstance, setTurnstileInstance] = useState(0);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -82,41 +84,31 @@ export default function Comparisons() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      setErrorMessage('Please complete the CAPTCHA challenge.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const { error } = await supabase
-        .from('quote_requests')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            category: selectedPackage,
-            description: `Word Count: ${formData.wordCount}, Source: ${formData.sourceLanguage}`,
-            urgency: formData.urgency,
-            source_language: formData.sourceLanguage,
-            target_languages: formData.targetLanguages,
-            message: formData.message || null,
-            status: 'pending',
-          },
-        ]);
+      const { error } = await supabase.functions.invoke('submit-quote-request', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          category: selectedPackage,
+          description: `Word Count: ${formData.wordCount}, Source: ${formData.sourceLanguage}`,
+          urgency: formData.urgency,
+          source_language: formData.sourceLanguage,
+          target_languages: formData.targetLanguages,
+          message: formData.message || null,
+          turnstileToken,
+        },
+      });
 
       if (error) throw error;
-
-      // Notify owner via email (fire-and-forget, never blocks the user)
-      notifyQuoteRequest({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        category: selectedPackage,
-        wordCount: formData.wordCount,
-        sourceLanguage: formData.sourceLanguage,
-        targetLanguages: formData.targetLanguages,
-        urgency: formData.urgency,
-        message: formData.message,
-      });
 
       setSubmitSuccess(true);
       setFormData({
@@ -129,6 +121,8 @@ export default function Comparisons() {
         urgency: 'standard',
         message: '',
       });
+      setTurnstileToken(null);
+      setTurnstileInstance((prev) => prev + 1);
       setTimeout(() => {
         setSubmitSuccess(false);
         setShowForm(false);
@@ -353,6 +347,16 @@ export default function Comparisons() {
                   />
                 </div>
 
+                <div>
+                  <Turnstile
+                    key={turnstileInstance}
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => setTurnstileToken(null)}
+                  />
+                </div>
+
                 <div className="flex gap-3 pt-4">
                   <button
                     type="button"
@@ -363,7 +367,7 @@ export default function Comparisons() {
                   </button>
                   <button
                     type="submit"
-                    disabled={isSubmitting || submitSuccess}
+                    disabled={isSubmitting || submitSuccess || !turnstileToken}
                     className="flex-1 px-4 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Quote Request'}

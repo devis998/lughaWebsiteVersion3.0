@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MessageSquare } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { supabase } from '../lib/supabase';
-import { notifyContactInquiry } from '../lib/notify';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -15,6 +15,8 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileInstance, setTurnstileInstance] = useState(0);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -23,33 +25,27 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      setErrorMessage('Please complete the CAPTCHA challenge.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const { error } = await supabase
-        .from('contact_inquiries')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            subject: formData.subject,
-            message: formData.message,
-            status: 'pending',
-          },
-        ]);
+      const { error } = await supabase.functions.invoke('submit-contact-inquiry', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          turnstileToken,
+        },
+      });
 
       if (error) throw error;
-
-      // Notify owner via email (fire-and-forget)
-      notifyContactInquiry({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        message: formData.message,
-      });
 
       setSubmitted(true);
       setFormData({
@@ -59,6 +55,8 @@ export default function Contact() {
         subject: '',
         message: '',
       });
+      setTurnstileToken(null);
+      setTurnstileInstance((prev) => prev + 1);
 
       setTimeout(() => {
         setSubmitted(false);
@@ -218,9 +216,19 @@ export default function Contact() {
                 />
               </div>
 
+              <div>
+                <Turnstile
+                  key={turnstileInstance}
+                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                />
+              </div>
+
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 className="w-full px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-lg disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
