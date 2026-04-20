@@ -59,7 +59,7 @@ export default function Hero() {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl">
                     <div>
-                      <div className="text-sm text-gray-600">Active Projects</div>
+                      <div className="text-sm text-gray-600">Completed Projects</div>
                       <div className="text-3xl font-bold text-primary-600">2,847</div>
                     </div>
                     <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center">
@@ -68,17 +68,17 @@ export default function Hero() {
                   </div>
 
                   <div className="space-y-3">
-                    {['Legal', 'Medical', 'Technical', 'General'].map((cat, i) => (
+                    {['General', 'Medical', 'Technical', 'Legal'].map((cat, i) => (
                       <div key={cat} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
                         <span className="font-medium text-gray-700">{cat} Translation</span>
                         <div className="flex items-center space-x-2">
                           <div className="w-32 bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-primary-500 h-2 rounded-full"
-                              style={{ width: `${90 - i * 10}%` }}
+                              style={{ width: `${93 - i * 6}%` }}
                             />
                           </div>
-                          <span className="text-sm text-gray-600">{90 - i * 10}%</span>
+                          <span className="text-sm text-gray-600">{93 - i * 6}%</span>
                         </div>
                       </div>
                     ))}

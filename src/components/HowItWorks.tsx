@@ -4,22 +4,22 @@ const steps = [
   {
     icon: Upload,
     title: 'Upload Your Content',
-    description: 'Share your document or content with us. We support 50+ file formats and can handle projects of any size.',
+    description: 'Share your document or content with us. We support all file formats and can handle projects of any size.',
   },
   {
     icon: Target,
     title: 'Select Your Category',
-    description: 'Choose from Legal, Medical, Tech, Business, Education, or General translation categories for specialized expertise.',
+    description: 'Choose any category ranging from Legal, Medical, Tech, Business, Education, or General translation categories for specialized expertise.',
   },
   {
     icon: Users,
-    title: 'Expert Matching',
-    description: 'Our AI matches you with certified translators who have specific experience in your industry and language pair.',
+    title: 'Work and Review',
+    description: 'We match your project with certified and experienced translators who have specific experience in your industry and language pair. We then assign internal or external reviewers for QA.',
   },
   {
     icon: CheckCircle,
     title: 'Quality Delivery',
-    description: 'Receive your translation with quality assurance, on time. Revisions included to ensure 100% satisfaction.',
+    description: 'Receive your translation with quality assurance, on time. We include revisions to ensure 100% satisfaction.',
   },
 ];
 

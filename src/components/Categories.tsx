@@ -8,7 +8,7 @@ const categories = [
     description: 'Certified legal translators for contracts, patents, court documents, and compliance materials. Guaranteed accuracy for legal proceedings.',
     features: ['Certified Translators', 'Legal Terminology', '24/7 Rush Service', 'Confidential'],
     color: 'from-blue-500 to-blue-600',
-    stats: { projects: '5,000+', accuracy: '99.9%' }
+    stats: { projects: '35,000+', accuracy: '99.9%' }
   },
   {
     icon: Stethoscope,
@@ -17,7 +17,7 @@ const categories = [
     description: 'Medical professionals translating patient records, clinical trials, pharmaceutical docs, and healthcare communications with clinical precision.',
     features: ['Medical Experts', 'HIPAA Compliant', 'Clinical Accuracy', 'Fast Turnaround'],
     color: 'from-red-500 to-red-600',
-    stats: { projects: '3,500+', accuracy: '99.8%' }
+    stats: { projects: '80,00+', accuracy: '99.8%' }
   },
   {
     icon: Code,
@@ -26,7 +26,7 @@ const categories = [
     description: 'Technical translators who understand software, APIs, user guides, and tech documentation. Perfect for SaaS and tech companies.',
     features: ['Tech Specialists', 'UI/UX Localization', 'API Documentation', 'Developer-Friendly'],
     color: 'from-purple-500 to-purple-600',
-    stats: { projects: '4,200+', accuracy: '99.7%' }
+    stats: { projects: '61,00+', accuracy: '99.7%' }
   },
   {
     icon: Briefcase,
@@ -35,7 +35,7 @@ const categories = [
     description: 'Business translators for presentations, reports, marketing materials, and corporate communications that maintain your brand voice.',
     features: ['Brand Consistency', 'Market Research', 'B2B Experience', 'Industry Specific'],
     color: 'from-green-500 to-green-600',
-    stats: { projects: '6,800+', accuracy: '99.5%' }
+    stats: { projects: '110,000+', accuracy: '99.5%' }
   },
   {
     icon: GraduationCap,
@@ -44,7 +44,7 @@ const categories = [
     description: 'Educational content translators for curricula, e-learning, research papers, and academic materials maintaining pedagogical integrity.',
     features: ['Academic Experts', 'Curriculum Design', 'E-Learning Ready', 'Research Papers'],
     color: 'from-orange-500 to-orange-600',
-    stats: { projects: '2,900+', accuracy: '99.6%' }
+    stats: { projects: '240,000+', accuracy: '99.6%' }
   },
   {
     icon: Globe,
@@ -53,7 +53,7 @@ const categories = [
     description: 'General content translation for websites, social media, personal documents, and everyday communication needs at affordable rates.',
     features: ['Fast Delivery', 'Affordable Rates', 'Cultural Nuance', 'Native Speakers'],
     color: 'from-teal-500 to-teal-600',
-    stats: { projects: '12,000+', accuracy: '99.4%' }
+    stats: { projects: '530,000+', accuracy: '99.4%' }
   }
 ];
 
@@ -63,7 +63,7 @@ export default function Categories() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-primary-100 px-4 py-2 rounded-full mb-4">
-            <span className="text-primary-700 font-medium text-sm">Industry-Specific Solutions</span>
+            <span className="text-primary-700 font-medium text-sm">Our Industry-Specific Solutions</span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
             Translation Categories
@@ -112,7 +112,7 @@ export default function Categories() {
 
                   <div className="flex items-center justify-between pt-6 border-t border-gray-100">
                     <div>
-                      <div className="text-xs text-gray-500">Completed</div>
+                      <div className="text-xs text-gray-500">Words Completed</div>
                       <div className="text-lg font-bold text-gray-900">{category.stats.projects}</div>
                     </div>
                     <div>

@@ -19,7 +19,7 @@ const values = [
   {
     icon: TrendingUp,
     title: 'Innovation Driven',
-    description: 'Leveraging technology and AI for faster matching while maintaining human expertise.',
+    description: 'We continuously improve our processes and solutions to deliver smarter and more effective language services.',
   },
 ];
 
@@ -34,7 +34,7 @@ export default function About() {
             </div>
 
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Bridging Cultures Through Language
+              We Bridge Cultures Through Language
             </h2>
 
             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
@@ -74,7 +74,7 @@ export default function About() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Technology Enhanced</h4>
-                  <p className="text-gray-600">AI-powered matching and workflow automation for faster delivery without compromising quality.</p>
+                  <p className="text-gray-600">We use modern CAT tools and streamlined workflows ensure faster turnaround, consistency, and high-quality delivery.</p>
                 </div>
               </div>
             </div>
