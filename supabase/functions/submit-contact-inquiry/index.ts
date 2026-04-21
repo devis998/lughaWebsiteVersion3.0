@@ -289,7 +289,7 @@ Deno.serve(async (req: Request) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "Lugha Notifications <onboarding@resend.dev>",
+            from: "Lugha Notifications <notifications@getlugha.com>",
             to: getResendRecipients(),
             reply_to: body.email,
             subject: `💬 New Contact Inquiry — ${subjectLabel} from ${body.name}`,
