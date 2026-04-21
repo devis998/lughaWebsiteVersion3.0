@@ -1,8 +1,11 @@
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   const handleWhatsApp = () => {
     window.open(
@@ -11,8 +14,8 @@ export default function Navigation() {
     );
   };
 
-  const scrollToComparisons = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const scrollToComparisons = () => {
+    if (!isHome) return;
     const element = document.getElementById('comparisons');
     element?.scrollIntoView({ behavior: 'smooth' });
     setIsMenuOpen(false);
@@ -22,23 +25,28 @@ export default function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <img src="/lugha_logo_file-02.png" alt="Lugha" className="h-10" />
-          </div>
+          </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#categories" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <a href={isHome ? '#categories' : '/#categories'} className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Categories
             </a>
-            <a href="#comparisons" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <a href={isHome ? '#comparisons' : '/#comparisons'} className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Pricing
             </a>
-            <a href="#contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Contact
-            </a>
+            </Link>
             <a
-              href="#"
-              onClick={scrollToComparisons}
+              href={isHome ? '#comparisons' : '/#comparisons'}
+              onClick={(e) => {
+                if (isHome) {
+                  e.preventDefault();
+                  scrollToComparisons();
+                }
+              }}
               className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
             >
               Get Quote
@@ -57,21 +65,29 @@ export default function Navigation() {
       {isMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="px-4 py-4 space-y-3">
-            <a href="#categories" className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
+            <a href={isHome ? '#categories' : '/#categories'} className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
               Categories
             </a>
-            <a href="#comparisons" className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
+            <a href={isHome ? '#comparisons' : '/#comparisons'} className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
               Pricing
             </a>
-            <a href="#contact" className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
+            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
               Contact
-            </a>
-            <button
-              onClick={scrollToComparisons}
-              className="w-full px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+            </Link>
+            <a
+              href={isHome ? '#comparisons' : '/#comparisons'}
+              onClick={(e) => {
+                if (isHome) {
+                  e.preventDefault();
+                  scrollToComparisons();
+                } else {
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="block text-center w-full px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
             >
               Get Quote
-            </button>
+            </a>
             <button
               onClick={handleWhatsApp}
               className="w-full px-6 py-2.5 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors font-medium flex items-center justify-center gap-2"

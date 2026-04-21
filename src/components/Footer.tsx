@@ -1,6 +1,10 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Footer() {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -41,12 +45,12 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><a href="#about" className="hover:text-primary-400 transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary-400 transition-colors">Our Team</a></li>
+              <li><a href={isHome ? '#about' : '/#about'} className="hover:text-primary-400 transition-colors">About Us</a></li>
+              <li><Link to="/our-team" className="hover:text-primary-400 transition-colors">Our Team</Link></li>
               <li><a href="#" className="hover:text-primary-400 transition-colors">Careers</a></li>
               <li><a href="#" className="hover:text-primary-400 transition-colors">Blog</a></li>
               <li><a href="#" className="hover:text-primary-400 transition-colors">Press Kit</a></li>
-              <li><a href="#" className="hover:text-primary-400 transition-colors">Contact</a></li>
+              <li><Link to="/contact" className="hover:text-primary-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
 
@@ -83,9 +87,9 @@ export default function Footer() {
               2026 Lugha. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="hover:text-primary-400 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-primary-400 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-primary-400 transition-colors">Cookie Policy</a>
+              <Link to="/privacy-policy" className="hover:text-primary-400 transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-primary-400 transition-colors">Terms of Service</Link>
+              <Link to="/cookie-policy" className="hover:text-primary-400 transition-colors">Cookie Policy</Link>
             </div>
           </div>
         </div>
