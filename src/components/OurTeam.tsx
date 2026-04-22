@@ -239,7 +239,7 @@ export default function OurTeam() {
   const level3 = teamData.filter((m) => m.level === 3);
 
   return (
-    <section id="team" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+    <section id="our-team" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16">

@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import Hero from '../components/Hero';
 import HowItWorks from '../components/HowItWorks';
 import Navigation from '../components/Navigation';
+import OurTeam from '../components/OurTeam';
 import Testimonials from '../components/Testimonials';
 
 export default function HomePage() {
@@ -19,6 +20,7 @@ export default function HomePage() {
       <About />
       <Testimonials />
       <Comparisons />
+      <OurTeam />
       <Contact />
       <CTA />
       <Footer />

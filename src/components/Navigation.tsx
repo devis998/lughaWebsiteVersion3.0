@@ -21,12 +21,19 @@ export default function Navigation() {
     setIsMenuOpen(false);
   };
 
+  const scrollToOurTeam = () => {
+    if (!isHome) return;
+    const element = document.getElementById('our-team');
+    element?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center space-x-2">
-            <img src="/lugha_logo_file-02.png" alt="Lugha" className="h-10" />
+            <img src="/lugha_logo_file-02.png" alt="Lugha" className="h-12" />
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
@@ -39,9 +46,18 @@ export default function Navigation() {
             <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Contact
             </Link>
-            <Link to="/our-team" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <a
+              href={isHome ? '#our-team' : '/#our-team'}
+              onClick={(e) => {
+                if (isHome) {
+                  e.preventDefault();
+                  scrollToOurTeam();
+                }
+              }}
+              className="text-gray-700 hover:text-primary-600 transition-colors font-medium"
+            >
               Our Team
-            </Link>
+            </a>
             <a
               href={isHome ? '#comparisons' : '/#comparisons'}
               onClick={(e) => {
@@ -84,6 +100,20 @@ export default function Navigation() {
             <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="block py-2 text-gray-700 hover:text-primary-600 font-medium">
               Contact
             </Link>
+            <a
+              href={isHome ? '#our-team' : '/#our-team'}
+              onClick={(e) => {
+                if (isHome) {
+                  e.preventDefault();
+                  scrollToOurTeam();
+                } else {
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="block py-2 text-gray-700 hover:text-primary-600 font-medium"
+            >
+              Our Team
+            </a>
             <a
               href={isHome ? '#comparisons' : '/#comparisons'}
               onClick={(e) => {
