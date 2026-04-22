@@ -64,11 +64,11 @@ const teamData: TeamMember[] = [
   },
   {
     id: 5,
-    name: 'Yusuf Osman',
+    name: 'Jeph',
     role: 'Senior Translator — Swahili & Somali',
     bio: 'Native Swahili speaker with specialization in legal and medical translation. Yusuf brings precision and cultural depth to every document he touches.',
     photo: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
-    languages: ['Swahili', 'Somali', 'Arabic', 'English'],
+    languages: ['Kinyarwanda', 'English', 'Arabic', 'English'],
     linkedin: '#',
     level: 3,
   },
