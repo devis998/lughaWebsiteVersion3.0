@@ -39,6 +39,9 @@ export default function Navigation() {
             <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Contact
             </Link>
+            <Link to="/our-team" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+              Our Team
+            </Link>
             <a
               href={isHome ? '#comparisons' : '/#comparisons'}
               onClick={(e) => {
