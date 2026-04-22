@@ -1,22 +1,28 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import CookiePolicyPage from './pages/CookiePolicyPage';
-import ContactPage from './pages/ContactPage';
-import HomePage from './pages/HomePage';
-import OurTeamPage from './pages/OurTeamPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
+import Navigation from './components/Navigation';
+import Hero from './components/Hero';
+import Categories from './components/Categories';
+import HowItWorks from './components/HowItWorks';
+import About from './components/About';
+import Testimonials from './components/Testimonials';
+import Comparisons from './components/Comparisons';
+import Contact from './components/Contact';
+import CTA from './components/CTA';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-      <Route path="/cookie-policy" element={<CookiePolicyPage />} />
-      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/our-team" element={<OurTeamPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <div className="min-h-screen bg-white">
+      <Navigation />
+      <Hero />
+      <Categories />
+      <HowItWorks />
+      <About />
+      <Testimonials />
+      <Comparisons />
+      <Contact />
+      <CTA />
+      <Footer />
+    </div>
   );
 }
 

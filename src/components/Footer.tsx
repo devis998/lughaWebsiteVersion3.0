@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
-            <img src="/lugha_logo_file-02.png" alt="Lugha" className="h-10 mb-4 brightness-0 invert" />
+            <img src="/lugha_logo_file-02.png" alt="Lugha" className="h-16 mb-0 brightness-0 invert" />
             <p className="text-gray-400 leading-relaxed mb-4">
               Specialized translation services connecting cultures and breaking barriers across Africa and Asia.
             </p>
