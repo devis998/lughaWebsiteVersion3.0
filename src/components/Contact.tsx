@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MessageSquare } from 'lucide-react';
+import { Mail, Phone, MessageSquare, Upload, FileText, X } from 'lucide-react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { supabase } from '../lib/supabase';
 
@@ -17,6 +17,39 @@ export default function Contact() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileInstance, setTurnstileInstance] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileData, setFileData] = useState<{ content: string; name: string } | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    setErrorMessage(null);
+    
+    if (selectedFile) {
+      // 5MB limit
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setErrorMessage('File size must be less than 5MB.');
+        e.target.value = '';
+        setFile(null);
+        setFileData(null);
+        return;
+      }
+
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = (reader.result as string).split(',')[1];
+        setFileData({ content: base64String, name: selectedFile.name });
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const removeFile = () => {
+    setFile(null);
+    setFileData(null);
+    const fileInput = document.getElementById('document') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -42,6 +75,8 @@ export default function Contact() {
           subject: formData.subject,
           message: formData.message,
           turnstileToken,
+          fileContent: fileData?.content,
+          fileName: fileData?.name,
         },
       });
 
@@ -56,6 +91,8 @@ export default function Contact() {
         message: '',
       });
       setTurnstileToken(null);
+      setFile(null);
+      setFileData(null);
       setTurnstileInstance((prev) => prev + 1);
 
       setTimeout(() => {
@@ -212,8 +249,51 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Tell us about your translation needs..."
                 />
+              </div>
+
+              <div>
+                <label htmlFor="document" className="block text-sm font-medium text-gray-700 mb-1">
+                  Attach Document (Optional, Max 5MB)
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="document"
+                    name="document"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                  />
+                  {!file ? (
+                    <label
+                      htmlFor="document"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-all text-gray-500"
+                    >
+                      <Upload size={20} />
+                      <span className="text-sm font-medium">Click to upload or drag and drop</span>
+                    </label>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-primary-50 border border-primary-200 rounded-lg">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="p-2 bg-primary-100 rounded-lg text-primary-600">
+                          <FileText size={20} />
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                          <p className="text-xs text-gray-500">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="p-1 hover:bg-primary-200 rounded-full text-gray-500 transition-colors"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
