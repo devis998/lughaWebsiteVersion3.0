@@ -101,13 +101,6 @@ export default function About() {
               );
             })}
 
-            <div className="bg-gradient-to-br from-primary-500 to-primary-600 p-8 rounded-2xl text-white">
-              <div className="text-5xl font-bold mb-2">2026</div>
-              <div className="text-xl font-semibold mb-3">Version 3.0 Launch</div>
-              <p className="text-primary-100">
-                Enhanced category specialization, improved workflows, and expanded language coverage for the next generation of translation services.
-              </p>
-            </div>
           </div>
         </div>
       </div>
