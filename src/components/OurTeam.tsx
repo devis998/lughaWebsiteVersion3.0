@@ -122,9 +122,8 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
 
   return (
     <div
-      className={`group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
-        featured ? 'border-2 border-accent-500' : 'border border-gray-100'
-      }`}
+      className={`group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${featured ? 'border-2 border-accent-500' : 'border border-gray-100'
+        }`}
     >
       {featured && (
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-400 to-accent-600 z-10" />
@@ -150,9 +149,8 @@ function MemberCard({ member, featured = false }: { member: TeamMember; featured
 
       <div className="p-4">
         <p
-          className={`text-gray-600 text-sm leading-relaxed transition-all duration-300 ${
-            expanded ? '' : 'line-clamp-3'
-          }`}
+          className={`text-gray-600 text-sm leading-relaxed transition-all duration-300 ${expanded ? '' : 'line-clamp-3'
+            }`}
         >
           {member.bio}
         </p>

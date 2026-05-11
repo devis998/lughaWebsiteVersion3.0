@@ -20,6 +20,8 @@ interface ContactInquiry {
   subject: string;
   message: string;
   turnstileToken: string;
+  fileContent?: string;
+  fileName?: string;
 }
 
 const LIMITS = {
@@ -74,6 +76,8 @@ function validateContactPayload(raw: unknown): { ok: true; data: ContactInquiry 
   const subject = normalizeText(body.subject).toLowerCase();
   const message = normalizeText(body.message);
   const turnstileToken = normalizeText(body.turnstileToken);
+  const fileContent = typeof body.fileContent === "string" ? body.fileContent : undefined;
+  const fileName = typeof body.fileName === "string" ? normalizeText(body.fileName) : undefined;
 
   if (!name || name.length > LIMITS.nameMax || hasSuspiciousContent(name) || URL_RE.test(name)) {
     return { ok: false, error: "Invalid name" };
@@ -94,9 +98,14 @@ function validateContactPayload(raw: unknown): { ok: true; data: ContactInquiry 
     return { ok: false, error: "Missing CAPTCHA token" };
   }
 
+  // Basic size check for base64 string (roughly 5MB limit)
+  if (fileContent && fileContent.length > 7 * 1024 * 1024) {
+    return { ok: false, error: "File too large" };
+  }
+
   return {
     ok: true,
-    data: { name, email, phone, subject, message, turnstileToken },
+    data: { name, email, phone, subject, message, turnstileToken, fileContent, fileName },
   };
 }
 
@@ -160,6 +169,7 @@ function buildContactEmailHtml(body: ContactInquiry): string {
       <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">From</td><td style="padding:8px 0;font-size:15px;font-weight:500">${body.name}</td></tr>
       <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">Email</td><td style="padding:8px 0"><a href="mailto:${body.email}" style="color:#0d9488">${body.email}</a></td></tr>
       <tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">Phone</td><td style="padding:8px 0"><a href="tel:${body.phone}" style="color:#0d9488">${body.phone}</a></td></tr>
+      ${body.fileName ? `<tr><td style="padding:8px 0;color:#888;font-size:12px;text-transform:uppercase">Attachment</td><td style="padding:8px 0;font-size:14px;color:#0d9488 font-weight:500">📎 ${body.fileName}</td></tr>` : ''}
     </table>
     <div style="margin-top:20px">
       <div style="color:#888;font-size:12px;text-transform:uppercase;margin-bottom:6px">Message</div>
@@ -294,6 +304,12 @@ Deno.serve(async (req: Request) => {
             reply_to: body.email,
             subject: `💬 New Contact Inquiry — ${subjectLabel} from ${body.name}`,
             html: buildContactEmailHtml(body),
+            attachments: body.fileContent && body.fileName ? [
+              {
+                content: body.fileContent,
+                filename: body.fileName,
+              }
+            ] : undefined,
           }),
         });
         if (!emailRes.ok) {
