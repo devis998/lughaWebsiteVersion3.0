@@ -32,11 +32,11 @@ const teamData: TeamMember[] = [
     name: 'Namara A',
     role: 'LQA Manager',
     bio: 'Linguistic scholar and certified translator with deep expertise in West African languages. Kofi oversees translation quality and linguistic integrity across all Lugha projects.',
-    photo: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=400',
+    photo: 'Namara.jpeg',
     languages: ['Swahili', 'Kirundi', 'English'],
     linkedin: '#',
     twitter: '#',
-    email: 'kofi@lugha.com',
+    email: 'namara@getlugha.com',
     level: 2,
   },
   {
@@ -64,7 +64,7 @@ const teamData: TeamMember[] = [
   },
   {
     id: 5,
-    name: 'Jeph',
+    name: 'Jeph I',
     role: 'Senior Translator — Swahili & Somali',
     bio: 'Native Swahili speaker with specialization in legal and medical translation. Yusuf brings precision and cultural depth to every document he touches.',
     photo: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
